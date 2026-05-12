@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>BD71 অ্যাডমিন</title>
+<style>
+body{background:#0a0f1e;color:white;font-family:system-ui;padding:20px;}
+button{background:#ff5e3a;border:none;padding:10px;border-radius:40px;color:white;margin-top:10px;}
+</style>
+</head>
+<body>
+<h2>BD71 অ্যাডমিন প্যানেল</h2>
+<div id="orders"></div>
+<script>
+let out='';
+for(let i=0;i<localStorage.length;i++){
+    let k=localStorage.key(i);
+    if(k&&k.startsWith('orders_')){
+        let u=k.replace('orders_','');
+        let o=JSON.parse(localStorage.getItem(k)||'[]');
+        o.forEach(or=>{out+=`<div style="background:#111;padding:10px;margin:10px;"><b>${u}</b> | ${or.uid} | ${or.diamonds}💎 | ${or.status}</div>`;});
+    }
+}
+document.getElementById('orders').innerHTML=out||'কোনো অর্ডার নেই';
+if(prompt('পাসওয়ার্ড দিন')!=='bd71admin') location.href='index.html';
+</script>
+</body>
+</html>
