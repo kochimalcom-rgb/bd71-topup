@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BD71 Topup - ডায়মন্ড ও গিফট কার্ড</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
+            color: white;
+            padding: 20px 12px 40px;
+        }
+        .container {
+            max-width: 550px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .brand {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFB347, #FF5E3A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 10px;
+            background: #11181f;
+            padding: 6px;
+            border-radius: 60px;
+            margin-bottom: 25px;
+            border: 1px solid #2a3748;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tab.active {
+            background: #ff5e3a;
+            color: white;
+        }
+        .card {
+            background: #11181f;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #2a3748;
+        }
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #0a0f16;
+            border: 1px solid #2a3a4a;
+            border-radius: 60px;
+            color: white;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(95deg, #ff8c3a, #ff5e3a);
+            border: none;
+            border-radius: 60px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .package-item {
+            background: #0a0f16;
+            border: 1px solid #2a3748;
+            border-radius: 20px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .package-item.selected {
+            border: 2px solid #ff5e3a;
+            background: #ff5e3a20;
+        }
+        .gift-card {
+            background: linear-gradient(135deg, #1e2a3e, #0f1620);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            background: #1e2a32ee;
+            padding: 12px;
+            border-radius: 60px;
+            text-align: center;
+            z-index: 1000;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #4a5b6e;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="brand">🇧🇩 BD71 TOPUP</div>
+        <p style="font-size:12px;">ডায়মন্ড টপআপ | গিফট কার্ড</p>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab active" data-tab="diamond">💎 ডায়মন্ড</div>
+        <div class="tab" data-tab="gift">🎁 গিফট কার্ড</div>
+    </div>
+
+    <div id="diamondSection">
+        <div class="card">
+            <h3>🔐 লগইন / রেজিস্ট্রেশন</h3>
+            <input type="text" id="username" placeholder="ইউজারনেম">
+            <input type="password" id="password" placeholder="পাসওয়ার্ড">
+            <button id="loginBtn">লগইন / রেজিস্ট্রেশন</button>
+        </div>
+        <div id="orderPanel" style="display:none;">
+            <div class="card">
+                <h3>💎 ডায়মন্ড প্যাক</h3>
+                <div class="package-grid" id="packageList"></div>
+                <input type="text" id="uid" placeholder="Free Fire UID">
+                <button id="placeOrderBtn">📦 অর্ডার করুন</button>
+            </div>
+            <div class="card">
+                <h3>💰 পেমেন্ট নির্দেশনা</h3>
+                <p>bKash: <strong>017XXXXXXXX</strong></p>
+                <p id="orderStatus"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="giftSection" style="display:none;">
+        <div class="card">
+            <h3>🎁 গিফট কার্ড কিনুন</h3>
+            <div class="package-grid" id="giftCardList"></div>
+            <button id="buyGiftCardBtn">🛒 কার্ড কিনুন</button>
+        </div>
+        <div class="card">
+            <h3>🔑 রিডিম করুন</h3>
+            <input type="text" id="redeemCode" placeholder="গিফট কার্ড কোড">
+            <button id="redeemBtn">রিডিম করুন</button>
+        </div>
+    </div>
+    <footer>ডেলিভারি 5-30 মিনিট | ম্যানুয়াল সিস্টেম</footer>
+</div>
+<div id="toast" style="display:none;" class="toast"></div>
+
+<script>
+    let currentUser = null;
+    let selectedDiamonds = 100;
+    let selectedPrice = 30;
+    let selectedGiftAmount = 100;
+
+    const diamondPackages = [
+        { diamonds: 100, price: 30 },
+        { diamonds: 210, price: 65 },
+        { diamonds: 520, price: 150 },
+        { diamonds: 1060, price: 299 }
+    ];
+
+    const giftTypes = [
+        { amount: 100, price: 100, diamonds: 330 },
+        { amount: 200, price: 200, diamonds: 680 }
+    ];
+
+    function showToast(msg) {
+        let toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2000);
+    }
+
+    function renderPackages() {
+        let container = document.getElementById('packageList');
+        if(!container) return;
+        container.innerHTML = '';
+        diamondPackages.forEach(pkg => {
+            let div = document.createElement('div');
+            div.className = `package-item ${selectedDiamonds === pkg.diamonds ? 'selected' : ''}`;
+            div.innerHTML = `<strong>${pkg.diamonds}💎</strong><br>৳${pkg.price}`;
+            div.onclick = () => {
+                selectedDiamonds = pkg.diamonds;
+                selectedPrice = pkg.price;
+                renderPackages();
+            };
+            container.appendChild(div);
+        });
+    }
+
+    function renderGiftCards() {
+        let container = document.getElementById('giftCardList');
+        if(!container) return;
+        container.innerHTML = '';
+        giftTypes.forEach(gift => {
+            let div = document.createElement('div');
+            div.className = `package-item ${selectedGiftAmount === gift.amount ? 'selected' : ''}`;
+            div.innerHTML = `<strong>৳${gift.amount}</strong><br>${gift.diamonds}💎`;
+            div.onclick = () => {
+                selectedGiftAmount = gift.amount;
+                renderGiftCards();
+            };
+            container.appendChild(div);
+        });
+    }
+
+    document.getElementById('loginBtn')?.addEventListener('click', function() {
+        let username = document.getElementById('username').value.trim();
+        if(!username) { showToast('ইউজারনেম দিন'); return; }
+        currentUser = username;
+        localStorage.setItem('currentUser', username);
+        showToast('✅ লগইন সফল!');
+        document.getElementById('orderPanel').style.display = 'block';
+        document.querySelector('#diamondSection .card:first-child').style.display = 'none';
+    });
+
+    document.getElementById('placeOrderBtn')?.addEventListener('click', function() {
+        let uid = document.getElementById('uid').value.trim();
+        if(!uid) { showToast('UID দিন'); return; }
+        let orders = JSON.parse(localStorage.getItem('orders_' + currentUser) || '[]');
+        orders.push({ id: Date.now(), uid: uid, diamonds: selectedDiamonds, price: selectedPrice, status: 'pending', date: new Date().toLocaleString() });
+        localStorage.setItem('orders_' + currentUser, JSON.stringify(orders));
+        document.getElementById('orderStatus').innerHTML = `✅ অর্ডার নেওয়া হয়েছে!`;
+        showToast('অর্ডার সফল!');
+    });
+
+    document.getElementById('buyGiftCardBtn')?.addEventListener('click', function() {
+        let code = 'BD71' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        let cards = JSON.parse(localStorage.getItem('giftCards') || '[]');
+        cards.push({ code: code, amount: selectedGiftAmount, used: false });
+        localStorage.setItem('giftCards', JSON.stringify(cards));
+        showToast(`কার্ড কেনা হয়েছে! কোড: ${code}`);
+    });
+
+    document.getElementById('redeemBtn')?.addEventListener('click', function() {
+        let code = document.getElementById('redeemCode').value.trim().toUpperCase();
+        let cards = JSON.parse(localStorage.getItem('giftCards') || '[]');
+        let card = cards.find(c => c.code === code && !c.used);
+        if(!card) { showToast('❌ ভুল বা ব্যবহৃত কোড'); return; }
+        card.used = true;
+        localStorage.setItem('giftCards', JSON.stringify(cards));
+        showToast('✅ রিডিম সফল!');
+    });
+
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            let tabName = tab.dataset.tab;
+            document.getElementById('diamondSection').style.display = tabName === 'diamond' ? 'block' : 'none';
+            document.getElementById('giftSection').style.display = tabName === 'gift' ? 'block' : 'none';
+            if(tabName === 'gift') renderGiftCards();
+        });
+    });
+
+    renderPackages();
+    renderGiftCards();
+    let savedUser = localStorage.getItem('currentUser');
+    if(savedUser) { currentUser = savedUser; document.getElementById('orderPanel').style.display = 'block'; document.querySelector('#diamondSection .card:first-child').style.display = 'none'; }
+</script>
+</body>
+</html>
